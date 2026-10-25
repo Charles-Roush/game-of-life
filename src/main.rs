@@ -1,9 +1,9 @@
 use macroquad::prelude::*;
 
 const BOARD_SIZE: usize = 100;
-const NEIGHBORS_TO_LIVE : [u8; 2] = [2, 3];
-const NEIGHBORS_TO_COME_ALIVE : [u8; 1] = [3];
-const CHECK_DISTANCE : u8 = 1;
+const NEIGHBORS_TO_LIVE: [u8; 2] = [2, 3];
+const NEIGHBORS_TO_COME_ALIVE: [u8; 1] = [3];
+const CHECK_DISTANCE: u8 = 1;
 const UPDATE_INTERVAL: f32 = 0.2; // seconds between updates
 // needs 2-3 neigbors to survive
 
@@ -38,7 +38,12 @@ fn get_mouse_box(
 
     Some((x, y))
 }
-fn get_neighbors(board : &[[bool; BOARD_SIZE]; BOARD_SIZE], x : usize, y : usize, check_distance : usize) -> u8 {
+fn get_neighbors(
+    board: &[[bool; BOARD_SIZE]; BOARD_SIZE],
+    x: usize,
+    y: usize,
+    check_distance: usize,
+) -> u8 {
     let x = x as isize;
     let y = y as isize;
     let check_distance = check_distance as isize;
@@ -52,18 +57,16 @@ fn get_neighbors(board : &[[bool; BOARD_SIZE]; BOARD_SIZE], x : usize, y : usize
     let mut neighbors = 0;
 
     for row in start_y..=end_y {
-
         if row < 0 || row >= BOARD_SIZE as isize {
-            continue
+            continue;
         }
 
         for col in start_x..=end_x {
-
             if col < 0 || col >= BOARD_SIZE as isize {
-                continue
+                continue;
             }
             if row == y && col == x {
-                continue
+                continue;
             }
             if board[row as usize][col as usize] {
                 neighbors += 1
@@ -72,15 +75,14 @@ fn get_neighbors(board : &[[bool; BOARD_SIZE]; BOARD_SIZE], x : usize, y : usize
     }
     neighbors
 }
-fn update_board(board : [[bool; BOARD_SIZE]; BOARD_SIZE]) -> [[bool; BOARD_SIZE]; BOARD_SIZE]{
+fn update_board(board: [[bool; BOARD_SIZE]; BOARD_SIZE]) -> [[bool; BOARD_SIZE]; BOARD_SIZE] {
     let mut new_board = board;
     for (y, row) in board.iter().enumerate() {
         for (x, cell) in row.iter().enumerate() {
             let neighbors = get_neighbors(&board, x, y, CHECK_DISTANCE as usize);
-            if *cell && !NEIGHBORS_TO_LIVE.contains(&neighbors){
+            if *cell && !NEIGHBORS_TO_LIVE.contains(&neighbors) {
                 new_board[y][x] = false;
-            }
-            else if !*cell && NEIGHBORS_TO_COME_ALIVE.contains(&neighbors) {
+            } else if !*cell && NEIGHBORS_TO_COME_ALIVE.contains(&neighbors) {
                 new_board[y][x] = true;
             }
         }
@@ -90,7 +92,6 @@ fn update_board(board : [[bool; BOARD_SIZE]; BOARD_SIZE]) -> [[bool; BOARD_SIZE]
 
 #[macroquad::main("Game of Life")]
 async fn main() {
-
     let mut mouse_pos;
     let mut board = [[false; BOARD_SIZE]; BOARD_SIZE];
     let board_size = BOARD_SIZE;
@@ -102,7 +103,6 @@ async fn main() {
         mouse_pos = mouse_position();
         let mut mouse_clicked = false;
         let mut space_clicked = false;
-
 
         if is_mouse_button_pressed(MouseButton::Left) {
             mouse_clicked = true;
@@ -121,16 +121,16 @@ async fn main() {
         let end_x = start_x + grid_size;
         let end_y = start_y + grid_size;
 
-
-
         if mouse_clicked {
-            let box_index = get_mouse_box(mouse_pos,
-                          square_width,
-                          board_size,
-                          start_x,
-                          end_x,
-                          start_y,
-                          end_y);
+            let box_index = get_mouse_box(
+                mouse_pos,
+                square_width,
+                board_size,
+                start_x,
+                end_x,
+                start_y,
+                end_y,
+            );
             if let Some((x, y)) = box_index {
                 println!("Clicked cell: {}, {}", x, y);
                 board[y][x] = !board[y][x];
@@ -158,11 +158,9 @@ async fn main() {
             let y_pos = start_y + square_width * y_index as f32;
             for (x_index, square) in row.iter().enumerate() {
                 let x_pos = start_x + square_width * x_index as f32;
-                if *square
-                {
+                if *square {
                     draw_rectangle(x_pos, y_pos, square_width, square_width, WHITE);
                 }
-
             }
         }
 
